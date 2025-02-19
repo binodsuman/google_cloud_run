@@ -1,0 +1,64 @@
+Open Terminal
+source ~/.bash_profile
+
+>docker --version
+>docker images # to see how many images there 
+
+>docker ps # to see running container
+
+>docker build --tag 'python_basic' . # it will use Dockerfile in same folder
+
+>docker run python_basic # this is for non web application.
+>docker run --publish 8080:8080 python_basic # now you can use localhost:8080 
+Control + C # to kill the job
+But it will running on Terminal
+
+#Run in Detached mode
+>docker run -d -p 8080:8080 python_basic #running in background
+docker run --name binod_dd -d -p 8080:8080 python_ba #If you want give container name
+
+>docker ps # to run running job
+>docker stop container_id/container_name # you can get from docker ps command..
+>docker start container_id/container_name
+
+#to go inside the container
+
+> $ docker exec -it <container> bash # get container id from docker ps 
+
+#Delete container
+>docker rm container_id
+
+#Delete image 
+>docker rmi your_image_name
+
+
+
+
+********** 
+
+** How to deploy in Google Cloud Run ** 
+Goto cloud.google.com 
+Search 'Artifact Registry API' in search box and make it ENABLE.
+Create new project say 'python-1'
+Open Terminal 
+Opload button there right side on top on Terminal box.
+Upload Folder where all files are there.
+gcloud config set project python-1-451216 #Here python-1-451216 is project id of python-1
+1. Build the Docker image 
+docker build -t gcr.io/<your-project-id>/<your-app-name> .
+docker build -t gcr.io/python-1-451216/basic_python .
+2. Push your image to Google Container Registry (GCR)
+docker push gcr.io/<your-project-id>/<your-app-name>
+docker push  gcr.io/python-1-451216/basic_python 
+NOTE: I got error that denied: Artifact Registry API has not been used then 
+Search 'Artifact Registry API' in search box and make it ENABLE. again run the same command
+docker push  gcr.io/python-1-451216/basic_python 
+3. Grant the "Cloud Run Admin" role: 
+gcloud projects add-iam-policy-binding python-1-451216 --member="user:binod****@gmail.com" --role="roles/run.admin"
+4. Deploy (Run) the service
+gcloud run deploy binod***** --port=8080 --allow-unauthenticated --region=us-central1   --platform=managed  --project=python-1-451216  --image gcr.io/python-1-451216/basic_python 
+
+
+Goto Cloud run and stop service
+
+Navigate to Container Registry, to see your image uploaded over there.
